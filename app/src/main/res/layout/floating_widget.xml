@@ -23,14 +23,14 @@
                 android:hint="Search music.."
                 android:layout_weight="2"/>
 
-        <ImageView
-                android:id="@+id/imgViewSearch"
+        <ImageButton
+                android:id="@+id/imgBtnSearch"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:adjustViewBounds="false"
                 android:background="@drawable/btnsearchshape"
-                android:src="@android:drawable/ic_menu_search" />
+                android:src="@android:drawable/ic_menu_search" android:scaleType="fitCenter"/>
     </LinearLayout>
 
     <LinearLayout
@@ -59,7 +59,7 @@
                 android:text="Move" />
 
         <ImageButton
-                android:id="@+id/btnResize"
+                android:id="@+id/imgBtnResize"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"

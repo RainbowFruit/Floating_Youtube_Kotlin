@@ -1,5 +1,6 @@
 package com.example.youtubewidgetkotlin
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,7 +14,7 @@ import android.os.IBinder
 import android.view.*
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
+import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -133,6 +134,7 @@ class FloatingWidgetService : Service() {
         setSearchBarOnClickListener()
         setButtonSearchOnClickListener()
         setButtonMoveOnClickListener()
+        setButtonResizeOnTouchListener()
     }
 
     private fun setFloatingViewOnTouchListener() {
@@ -166,8 +168,8 @@ class FloatingWidgetService : Service() {
     }
 
     private fun setButtonSearchOnClickListener() {
-        val imgViewSearch: ImageView = floatingView.findViewById(R.id.imgViewSearch)
-        imgViewSearch.setOnClickListener {
+        val imgBtnSearch: ImageButton = floatingView.findViewById(R.id.imgBtnSearch)
+        imgBtnSearch.setOnClickListener {
             val etSearch: EditText = floatingView.findViewById(R.id.etSearch)
             etSearch.clearFocus()
             layoutParams?.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
@@ -181,18 +183,48 @@ class FloatingWidgetService : Service() {
     private fun performVideoSearchAndPlay(searchQuery: String) {
         Thread {
             val videoInformationObject = VideosInformation(searchQuery, applicationContext).getFirstVideoInfo()
-            val videoId: String = videoInformationObject?.getJSONObject("id")?.
-                getString("videoId") ?: ""
+            val videoId: String = videoInformationObject?.getJSONObject("id")?.getString("videoId") ?: ""
             youTubePlayer.loadVideo(videoId, 0f)
         }.start()
     }
 
     private fun setButtonMoveOnClickListener() {
         val btnMove: Button = floatingView.findViewById(R.id.btnMove)
-        btnMove.setOnClickListener{
+        btnMove.setOnClickListener {
             println("clicked move button")
             stopSelf()
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setButtonResizeOnTouchListener() {
+        val imgBtnResize: ImageButton = floatingView.findViewById(R.id.imgBtnResize)
+
+        imgBtnResize.setOnTouchListener(object : View.OnTouchListener {
+            var initialTouchX: Float = 0.0f
+            var initialTouchY: Float = 0.0f
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+
+                when (event?.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        initialTouchX = event.rawX
+                        initialTouchY = event.rawY
+                        return true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        val xDiff: Int = (event.rawX - initialTouchX).toInt()
+                        val yDiff: Int = (event.rawY - initialTouchY).toInt()
+                        if (Math.abs(xDiff) > 9 || Math.abs(yDiff) > 9) {
+                            layoutParams?.width = floatingView.width + xDiff
+                            initialTouchX = event.rawX
+                            initialTouchY = event.rawY
+                            mWindowManager?.updateViewLayout(floatingView, layoutParams)
+                        }
+                    }
+                }
+                return false
+            }
+        })
     }
 
     override fun onDestroy() {
