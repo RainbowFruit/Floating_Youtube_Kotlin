@@ -133,8 +133,8 @@ class FloatingWidgetService : Service() {
         setFloatingViewOnTouchListener()
         setSearchBarOnClickListener()
         setButtonSearchOnClickListener()
-        setButtonMoveOnClickListener()
         setButtonResizeOnTouchListener()
+        setButtonMoveOnTouchListener()
     }
 
     private fun setFloatingViewOnTouchListener() {
@@ -188,14 +188,6 @@ class FloatingWidgetService : Service() {
         }.start()
     }
 
-    private fun setButtonMoveOnClickListener() {
-        val btnMove: Button = floatingView.findViewById(R.id.btnMove)
-        btnMove.setOnClickListener {
-            println("clicked move button")
-            stopSelf()
-        }
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private fun setButtonResizeOnTouchListener() {
         val imgBtnResize: ImageButton = floatingView.findViewById(R.id.imgBtnResize)
@@ -224,6 +216,60 @@ class FloatingWidgetService : Service() {
                 }
                 return false
             }
+        })
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setButtonMoveOnTouchListener() {
+        val btnMove: Button = floatingView.findViewById(R.id.btnMove)
+
+        btnMove.setOnTouchListener(object : View.OnTouchListener{
+
+            var initialX: Int? = 0
+            var initialY: Int? = 0
+            var initialTouchX: Float = 0.0f
+            var initialTouchY: Float = 0.0f
+            var deltaTime: Double = 0.0
+            var startTime: Double = 0.0
+            var moved: Boolean = false
+
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                when (event?.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        moved = false
+
+                        //Remember the initial position
+                        initialX = layoutParams?.x
+                        initialY = layoutParams?.y
+
+                        startTime = System.currentTimeMillis().toDouble()
+
+                        //Get the touch location
+                        initialTouchX = event.rawX
+                        initialTouchY = event.rawY
+                        return true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        val xDiff: Int = (event.rawX - initialTouchX).toInt()
+                        val yDiff: Int = (event.rawY - initialTouchY).toInt()
+
+                        layoutParams?.x = initialX?.plus(xDiff)
+                        layoutParams?.y = initialY?.plus(yDiff)
+                        mWindowManager?.updateViewLayout(floatingView, layoutParams)
+
+                        if (xDiff > 10 || yDiff > 10) {
+                            moved = true
+                        }
+                    }
+                }
+
+                deltaTime = System.currentTimeMillis() - startTime
+                if(deltaTime > 1000 && !moved) {
+                    stopSelf()
+                }
+                return false
+            }
+
         })
     }
 
