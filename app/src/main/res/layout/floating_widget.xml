@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content" >
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <EditText
+                android:id="@+id/etSearch"
+                android:background="@drawable/etsearchshape"
+
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:minHeight="50dp"
+                android:hint="Search music.."
+                android:layout_weight="2"/>
+
+        <ImageView
+                android:id="@+id/imgViewSearch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:adjustViewBounds="false"
+                android:background="@drawable/btnsearchshape"
+                android:src="@android:drawable/ic_menu_search" />
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/ytPlayerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        </com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <Button
+                android:id="@+id/btnMove"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="10"
+                android:background="@drawable/btnmoveshape"
+                android:text="Move" />
+
+        <ImageButton
+                android:id="@+id/btnResize"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5"
+                android:adjustViewBounds="true"
+                android:background="@drawable/btnresizeshape"
+                android:maxWidth="50dp"
+                android:maxHeight="50dp"
+                android:minWidth="30dp"
+                android:minHeight="30dp"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_menu_crop"
+                android:text="R" />
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
